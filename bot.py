@@ -1,7 +1,7 @@
 import sys
 import asyncio
 import logging
-from wikilib import basic_search
+from wikilib import basic_search, get_summary
 
 from decouple import config
 from aiogram.enums import ParseMode
@@ -29,8 +29,24 @@ async def echo_handler(message: types.Message) -> None:
 
 @router.message(filters.Command("search"))
 async def command_search_handler(message: types.Message) -> None:
-    result = basic_search(message.text)
+    query = message.text.split(maxsplit=1)
+    if len(query) < 2:
+        await message.answer("usage: /search your_query")
+        return
+
+    result = basic_search(query[1])
     await message.answer(result)
+
+@router.message(filters.Command("summary"))
+async def command_summary_handler(message: types.Message) -> None:
+    query = message.text.split(maxsplit=1)
+    if len(query) < 2:
+        await message.answer("usage: /summary your_query")
+        return
+
+    result = get_summary(query[1])    
+    await message.answer(result)
+
 
 async def main() -> None:
     bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
