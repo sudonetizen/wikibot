@@ -12,6 +12,7 @@ def basic_search(topic: str) -> str:
 
     return "\n".join(results)
 
+
 def get_page(topic: str):
     result = wiki.page(topic)
     return result
@@ -22,6 +23,14 @@ def get_summary(topic: str) -> str:
     if page.exists():
         return page.title + '\n\n' + page.summary
     return "not found"
+
+
+def get_summary_full(topic: str) -> str:
+    page = get_page(topic)
+    if page.exists():
+        return page.title + '\n\n' + page.text
+    return "not found"
+    
 
 if __name__ == "__main__":
     main()

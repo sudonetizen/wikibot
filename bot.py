@@ -1,7 +1,7 @@
 import sys
 import asyncio
 import logging
-from wikilib import basic_search, get_summary
+from wikilib import basic_search, get_summary, get_summary_full
 
 from decouple import config
 from aiogram.enums import ParseMode
@@ -47,6 +47,18 @@ async def command_summary_handler(message: types.Message) -> None:
     result = get_summary(query[1])    
     await message.answer(result)
 
+@router.message(filters.Command("summary_full"))
+async def command_summary_full_handler(message: types.Message) -> None:
+    query = message.text.split(maxsplit=1)
+    if len(query) < 2:
+        await message.answer("usage: /summary your_query")
+        return
+
+    result = get_summary_full(query[1])    
+    
+    for i in range(0, len(result), 4096):
+        part = result[i:i+4096]
+        await message.answer(part)
 
 async def main() -> None:
     bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
